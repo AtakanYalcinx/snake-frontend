@@ -1,22 +1,34 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomePage from '../views/HomePage.vue' // Korrigierter relativer Pfad und Name für HomePage
+import GameBoard from '../component/GameBoard.vue' // Korrigierter relativer Pfad für GameBoard
+import HighscoreList from '../component/HighscoreList.vue' // Korrigierter relativer Pfad für HighscoreList
+import UserProfile from '../views/UserProfile.vue' // Korrigierter relativer Pfad und Name für UserProfile
 
+// Definiere die Routen
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: HomeView
+    path: '/', // Startseite
+    name: 'HomePage', // Korrigierter Name für die Home-Seite
+    component: HomePage
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/game', // Spielseite
+    name: 'Game',
+    component: GameBoard
+  },
+  {
+    path: '/highscores', // Highscores-Anzeige
+    name: 'Highscores',
+    component: HighscoreList
+  },
+  {
+    path: '/profile', // Profilseite des Spielers
+    name: 'UserProfile', // Korrigierter Name für die Profil-Seite
+    component: UserProfile
   }
 ]
 
+// Erstelle den Router mit den definierten Routen und dem HTML5-History-Modus
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
