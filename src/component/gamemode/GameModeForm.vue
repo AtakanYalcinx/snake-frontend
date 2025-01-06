@@ -170,16 +170,20 @@ export default {
       }
     },
     async deleteGameMode(id) {
+      // Debug-Ausgabe: Zeigt, welche ID wir gerade löschen wollen
+      console.log("Deleting game mode with ID:", id)
+
       try {
-        await GameModeService.deleteGameMode(id);
-        this.gameModes = this.gameModes.filter((m) => m.id !== id);
+        await GameModeService.deleteGameMode(id)
+        this.gameModes = this.gameModes.filter((m) => m.id !== id)
       } catch (error) {
-        console.error('Error deleting game mode:', error);
+        console.error('Error deleting game mode:', error)
       } finally {
         // Menü schließen
-        this.openDropdownId = null;
+        this.openDropdownId = null
       }
     },
+
     selectMode(mode) {
       // 1) Modus ins Formular laden
       this.gameMode = { ...mode };

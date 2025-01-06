@@ -54,9 +54,19 @@ export default {
       const response = await fetch(`${baseURL}/${id}`, {
         method: 'DELETE',
       });
+
+      // Wenn der Server 204 (No Content) liefert, gibt es keinen Body
+      if (response.status === 204) {
+        // alles okay, kein JSON-Body vorhanden
+        return null;
+      }
+
+      // Prüfen, ob alles okay
       if (!response.ok) {
         throw new Error(`Fetch error: ${response.status}`);
       }
+
+      // Wenn der Server bei Erfolg (z.B. 200) JSON zurückgibt:
       return await response.json();
     } catch (error) {
       console.error('Error deleting game mode:', error);
