@@ -4,8 +4,6 @@
     <p>Select an option to start playing:</p>
     <div class="menu">
       <router-link to="/game" class="menu-item">Start Game</router-link>
-      <router-link to="/highscores" class="menu-item">View Highscores</router-link>
-      <router-link to="/profile" class="menu-item">View Profile</router-link>
     </div>
   </div>
 </template>

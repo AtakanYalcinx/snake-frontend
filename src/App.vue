@@ -5,19 +5,30 @@
       <nav>
         <router-link to="/">Home</router-link>
         <router-link to="/game">Play Game</router-link>
-        <router-link to="/highscores">Highscores</router-link>
-        <router-link to="/profile">Profile</router-link>
       </nav>
     </header>
 
     <!-- Router View zeigt die aktuell ausgewählte Route an -->
-    <router-view />
+    <router-view :gameMode="gameMode" @updateGameMode="updateGameMode" />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data () {
+    return {
+      gameMode: {
+        name: 'Default Mode',
+        speed: 3 // Standardgeschwindigkeit auf 3x reduziert
+      }
+    }
+  },
+  methods: {
+    updateGameMode (newGameMode) {
+      this.gameMode = newGameMode
+    }
+  }
 }
 </script>
 

@@ -1,34 +1,33 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '../views/HomePage.vue' // Korrigierter relativer Pfad und Name für HomePage
-import GameBoard from '../component/GameBoard.vue' // Korrigierter relativer Pfad für GameBoard
-import HighscoreList from '../component/HighscoreList.vue' // Korrigierter relativer Pfad für HighscoreList
-import UserProfile from '../views/UserProfile.vue' // Korrigierter relativer Pfad und Name für UserProfile
+import HomePage from '../views/HomePage.vue'
+import GameBoard from '../component/gameboard/GameBoard.vue'
 
-// Definiere die Routen
+// Falls du eine GameModeView zum Verwalten von GameModes hast, entkommentiere die nächste Zeile:
+// import GameModeView from '../views/GameModeView.vue'
+
 const routes = [
   {
-    path: '/', // Startseite
-    name: 'HomePage', // Korrigierter Name für die Home-Seite
+    path: '/',
+    name: 'HomePage',
     component: HomePage
   },
   {
-    path: '/game', // Spielseite
+    path: '/game',
     name: 'Game',
-    component: GameBoard
-  },
-  {
-    path: '/highscores', // Highscores-Anzeige
-    name: 'Highscores',
-    component: HighscoreList
-  },
-  {
-    path: '/profile', // Profilseite des Spielers
-    name: 'UserProfile', // Korrigierter Name für die Profil-Seite
-    component: UserProfile
+    component: GameBoard,
+    props: (route) => ({
+      // Standard GameMode auf Speed=3, statt 200
+      gameMode: route.params.gameMode || { name: 'Default Mode', speed: 3 }
+    })
   }
+  // Falls du GameModes im Frontend verwalten willst:
+  // {
+  //   path: '/gamemodes',
+  //   name: 'GameModeView',
+  //   component: GameModeView
+  // }
 ]
 
-// Erstelle den Router mit den definierten Routen und dem HTML5-History-Modus
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
