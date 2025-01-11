@@ -1,57 +1,49 @@
 <template>
   <div id="app">
-    <header>
-      <h1>Snake Game</h1>
-      <nav>
-        <router-link to="/">Home</router-link>
-        <router-link to="/game">Play Game</router-link>
-      </nav>
-    </header>
-
-    <!-- Router View zeigt die aktuell ausgewählte Route an -->
-    <router-view :gameMode="gameMode" @updateGameMode="updateGameMode" />
+    <nav>
+      <router-link to="/">Home</router-link>
+      <router-link to="/game">Game</router-link>
+    </nav>
+    <router-view />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App',
-  data () {
-    return {
-      gameMode: {
-        name: 'Default Mode',
-        speed: 3 // Standardgeschwindigkeit auf 3x reduziert
-      }
-    }
-  },
-  methods: {
-    updateGameMode (newGameMode) {
-      this.gameMode = newGameMode
-    }
-  }
-}
+  name: "App",
+};
 </script>
 
-<style scoped>
-#app {
-  text-align: center;
-  margin-top: 50px;
+<style>
+/* Globale Hintergrundfarbe */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #000; /* Passend zum Spielfeld */
+  color: white;
+  font-family: 'Arial', sans-serif;
+  height: 100%;
 }
 
-header {
-  background-color: #4CAF50;
-  padding: 20px;
-  color: white;
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #000; /* Hintergrund passend zum Spiel */
 }
 
 nav {
-  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background-color: #4caf50;
 }
 
 nav a {
   color: white;
-  margin: 0 10px;
   text-decoration: none;
+  margin: 0 15px;
+  font-weight: bold;
 }
 
 nav a:hover {

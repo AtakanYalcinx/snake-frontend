@@ -34,7 +34,7 @@
 import SnakeCanvas from './SnakeCanvas.vue'
 import GameLogic from './GameLogic.js'
 import GameModeForm from '../gamemode/GameModeForm.vue'
-import GameModeService from '../gamemode/gameModeService' // ggf. noch benötigt
+// import GameModeService from '../gamemode/gameModeService' // ggf. nötig, s. Kommentar
 
 export default {
   name: 'GameBoard',
@@ -68,9 +68,16 @@ export default {
      * Steuerung per Tastatur
      */
     changeDirection (event) {
-      if (!this.logic) return
-      const key = event.keyCode
+      // 1) Prüfen, ob gerade ein Eingabefeld fokussiert ist
+      //    Falls ja -> Nicht das Spiel steuern
+      const activeTag = document.activeElement.tagName.toLowerCase()
+      if (activeTag === 'input' || activeTag === 'textarea') {
+        return
+      }
 
+      if (!this.logic) return
+
+      const key = event.keyCode
       // Pfeiltasten
       if (key === 37 && this.logic.direction !== 'RIGHT') this.logic.direction = 'LEFT'
       else if (key === 38 && this.logic.direction !== 'DOWN') this.logic.direction = 'UP'
@@ -83,7 +90,7 @@ export default {
       else if (key === 68 && this.logic.direction !== 'LEFT') this.logic.direction = 'RIGHT'
       else if (key === 83 && this.logic.direction !== 'UP') this.logic.direction = 'DOWN'
 
-      // Beim ersten Tastendruck: Spiel starten (falls nicht schon gestartet)
+      // Erst beim ersten Tastendruck -> Spiel starten, falls nicht schon
       if (!this.gameStarted && this.logic && !this.logic.gameOver) {
         this.startGameInterval()
         this.gameStarted = true
@@ -157,7 +164,6 @@ export default {
      * Wenn in GameModeForm ein Modus gespeichert (created/updated) wurde
      */
     onGameModeSaved () {
-      // Du kannst hier z.B. eine Meldung anzeigen
       console.log('GameMode wurde gespeichert!')
       // currentEditMode auf null -> Formular wieder leeren
       this.currentEditMode = null
@@ -197,17 +203,34 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+/* ----------- Grund-Layout & Typografie ----------- */
 .container {
   display: flex;
   height: 100vh;
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(135deg, #1f1c2c, #928dab);
+  color: #e0e0e0;
 }
 
 /* Linke Spalte (Form + Chat-Liste) */
 .sidebar-left {
-  width: 250px;
-  padding: 10px;
-  border-right: 1px solid #ccc;
-  overflow-y: auto; /* Falls die Liste lang wird */
+  width: 300px;
+  padding: 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
+  overflow-y: auto;
+}
+
+.sidebar-left h3 {
+  font-size: 20px;
+  color: #00d2ff;
+  text-shadow: 0 0 5px #00d2ff;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 /* Hauptbereich Snake */
@@ -217,38 +240,173 @@ export default {
   flex-direction: column;
   align-items: center;
   position: relative;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 0 10px rgba(0, 210, 255, 0.2);
 }
 
+/* Überschriften und Text */
+.game-board h2 {
+  font-size: 28px;
+  color: #00d2ff;
+  text-shadow: 0 0 5px #00d2ff;
+  margin-bottom: 10px;
+}
+
+.game-board p {
+  font-size: 16px;
+  color: #b0bec5;
+  margin: 5px 0;
+}
+
+/* Canvas-Komponente */
+.snake-canvas {
+  border: 2px solid #00d2ff;
+  border-radius: 8px;
+  background-color: #1f1c2c;
+  box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+}
+
+/* Overlay bei Game Over */
 .overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+  animation: fadeInOverlay 0.5s ease-in-out;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.game-over-text {
+  font-size: 48px;
+  color: #ff4081;
+  text-shadow: 0 0 10px #ff4081, 0 0 20px #ff4081;
+  margin-bottom: 20px;
+  animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.btn {
+  padding: 12px 24px;
+  font-size: 18px;
+  background: linear-gradient(45deg, #00d2ff, #928dab);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin: 10px;
+  box-shadow: 0 4px 10px rgba(0, 210, 255, 0.3);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.btn:hover {
+  background: linear-gradient(45deg, #928dab, #00d2ff);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 210, 255, 0.4);
+}
+
+/* Responsive Anpassungen */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar-left {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .game-board {
+    padding: 10px;
+  }
+}
+
+.game-board {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Volle Höhe des Viewports */
+  background: radial-gradient(circle at top, #1b2735, #090a0f);
+  overflow: hidden;
+  color: white;
+  padding: 20px;
+}
+
+.game-board::before, .game-board::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.game-board::before {
+  background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat top center;
+  z-index: 0;
+}
+
+.game-board::after {
+  background: transparent url('https://www.transparenttextures.com/patterns/twinkling.png') repeat top center;
+  animation: move-twinkling 20s linear infinite;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+@keyframes move-twinkling {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+/* Optional: Titel oder Überschriften, falls nötig */
+.game-board h2 {
+  position: relative;
+  font-size: 64px;
+  margin-bottom: 20px;
+  z-index: 2; /* Über dem Hintergrund-Glow */
+  color: #ffffff;
+  text-shadow:
+    0 0 10px rgba(0, 255, 255, 0.8),
+    0 0 20px rgba(0, 255, 255, 0.6),
+    0 0 30px rgba(0, 255, 255, 0.4),
+    0 0 40px rgba(0, 255, 255, 0.2);
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at center, #1b2735, #090a0f); /* Gleicher Hintergrund wie im Spiel */
+  height: 100%;
+  overflow: hidden;
+}
+
+#app {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.game-over-text {
-  font-size: 48px;
-  color: white;
-  margin-bottom: 20px;
-}
 
-.btn {
-  padding: 10px 20px;
-  font-size: 18px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin: 10px;
-}
-.btn:hover {
-  background-color: #45a049;
-}
 </style>
