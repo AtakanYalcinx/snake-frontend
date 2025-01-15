@@ -1,4 +1,4 @@
-const baseURL = 'http://localhost:8080/api/gamemodes';
+const baseURL = 'https://snake-backend-1jpo.onrender.com/api/gamemodes';
 
 export default {
   async fetchGameModes() {
