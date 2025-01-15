@@ -1,4 +1,4 @@
-const baseURL = 'https://snake-backend-1jpo.onrender.com';
+const baseURL = 'https://snake-backend-1jpo.onrender.com/api/gamemodes';
 
 export default {
   async fetchGameModes() {
