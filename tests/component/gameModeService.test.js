@@ -15,7 +15,8 @@ describe('GameModeService', () => {
     });
 
     const data = await gameModeService.fetchGameModes();
-    expect(fetch).toHaveBeenCalledWith('http://localhost:8080/api/gamemodes');
+    // Erwartung nun auf Produktiv-URL:
+    expect(fetch).toHaveBeenCalledWith('https://snake-backend-1jpo.onrender.com/api/gamemodes');
     expect(data).toEqual(mockData);
   });
 
@@ -27,7 +28,8 @@ describe('GameModeService', () => {
     });
 
     const response = await gameModeService.createGameMode(newMode);
-    expect(fetch).toHaveBeenCalledWith('http://localhost:8080/api/gamemodes', {
+    // Erwartung auf Produktiv-URL:
+    expect(fetch).toHaveBeenCalledWith('https://snake-backend-1jpo.onrender.com/api/gamemodes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newMode),
@@ -35,19 +37,17 @@ describe('GameModeService', () => {
     expect(response).toEqual({ id: 2, ...newMode });
   });
 
-  test('handles errors correctly', async () => {
+  test('handles errors correctly (fetchGameModes)', async () => {
     fetch.mockResolvedValueOnce({ ok: false, status: 500 });
 
-    await expect(gameModeService.fetchGameModes()).rejects.toThrow(
-      'Fetch error: 500'
-    );
+    await expect(gameModeService.fetchGameModes()).rejects.toThrow('Fetch error: 500');
   });
 
   test('should handle error during createGameMode', async () => {
     fetch.mockResolvedValueOnce({ ok: false, status: 500 });
-    await expect(gameModeService.createGameMode({ name: 'Classic' })).rejects.toThrow(
-      'Fetch error: 500'
-    );
+    await expect(
+      gameModeService.createGameMode({ name: 'Classic' })
+    ).rejects.toThrow('Fetch error: 500');
   });
 
   test('should successfully update a game mode', async () => {
@@ -56,22 +56,36 @@ describe('GameModeService', () => {
       ok: true,
       json: async () => mockResponse,
     });
+
     const result = await gameModeService.updateGameMode(1, { name: 'Updated Mode' });
     expect(result).toEqual(mockResponse);
+
+    // Prüfen, ob die URL inkl. /1 aufgerufen wird:
+    expect(fetch).toHaveBeenCalledWith(
+      'https://snake-backend-1jpo.onrender.com/api/gamemodes/1',
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'Updated Mode' }),
+      }
+    );
   });
 
   test('should delete a game mode successfully', async () => {
     fetch.mockResolvedValueOnce({ status: 204 });
     const result = await gameModeService.deleteGameMode(1);
-    expect(fetch).toHaveBeenCalledWith('http://localhost:8080/api/gamemodes/1', { method: 'DELETE' });
-    expect(result).toBeNull();
+
+    expect(fetch).toHaveBeenCalledWith(
+      'https://snake-backend-1jpo.onrender.com/api/gamemodes/1',
+      { method: 'DELETE' }
+    );
+    expect(result).toBeNull(); // 204 = No Content => null
   });
 
   test('should throw an error when deleteGameMode fails', async () => {
     fetch.mockResolvedValueOnce({ ok: false, status: 404 });
     await expect(gameModeService.deleteGameMode(1)).rejects.toThrow('Fetch error: 404');
   });
-
 
   test('should handle 204 No Content response when deleting a game mode', async () => {
     fetch.mockResolvedValueOnce({ status: 204 });
@@ -80,8 +94,7 @@ describe('GameModeService', () => {
   });
 
   test('should throw an error for unexpected HTTP status codes', async () => {
-    fetch.mockResolvedValueOnce({ ok: false, status: 418 }); // "I'm a teapot" (Beispiel für unerwarteten Status)
+    fetch.mockResolvedValueOnce({ ok: false, status: 418 }); // "I'm a teapot" :-)
     await expect(gameModeService.fetchGameModes()).rejects.toThrow('Fetch error: 418');
   });
-
 });
